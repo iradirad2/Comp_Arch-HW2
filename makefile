@@ -1,5 +1,5 @@
 cacheSim: cacheSim.cpp
-	g++ -std=c++11 -g -Wall -o cacheSim cacheSim.cpp cache.cpp
+	g++ -std=c++11 -g -Wall -o cacheSim cacheSim.cpp
 
 .PHONY: clean
 clean:
