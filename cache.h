@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <cstddef>
 
 typedef uint32_t MASK;
 typedef bool outcome;
