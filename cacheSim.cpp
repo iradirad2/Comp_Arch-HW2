@@ -181,6 +181,7 @@ void simulator::process_request(char operation, addr_t address) {
     }
 }
 
+/* calculations */
 double simulator::calc_L1_miss_rate() const {
     return (double)L1.get_n_misses() / (double)L1.get_n_access();
 }
@@ -231,6 +232,7 @@ outcome cache::find_and_read_data(addr_t address) {
     tag_t cur_tag = create_tag(address);
     set_t cur_set = create_set(address);
     n_of_access++;
+    /* go thrugh the ways and find the tag in the set */
     for (size_t way_nr = 0; way_nr < ways.size(); way_nr++) {
         if (ways[way_nr].find_tag(cur_tag, cur_set)) {
             n_of_hits++;
@@ -419,6 +421,7 @@ bool tag_t::operator==(const tag_t &other) const {
     return data == other.data;
 }
 
+/* insert and mark as valid */
 void tag_t::validate_and_insert(const tag_t &other) {
     data = other.data;
     full_address = other.full_address;
@@ -459,10 +462,12 @@ void tag_t::set_dirty(bool state) {
 
 LRU::LRU(int _assoc) : assoc(_assoc), queue(assoc) {
     for (int i = 0; i < assoc; i++) {
+        /* initialize with way i being i */
         queue[i] = i;
     }
 }
 
+/* LRU is the one with a value of 0 in the queue */
 int LRU::get_lru() const {
     for (size_t i = 0; i < queue.size(); i++) {
         if (queue[i] == 0) return i;
