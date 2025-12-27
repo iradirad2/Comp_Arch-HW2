@@ -1,9 +1,9 @@
 #ifndef CACHE_H
 #define CACHE_H
 
+#include <cstddef>
 #include <cstdint>
 #include <vector>
-#include <cstddef>
 
 typedef uint32_t MASK;
 typedef bool outcome;
@@ -24,7 +24,7 @@ class LRU {
 class tag_t {
     uint32_t data;
     addr_t full_address;
-    int b_tag_size; // likely not needed, might remove
+    int b_tag_size;
 
     bool valid;
     bool dirty;
@@ -38,9 +38,12 @@ class tag_t {
      */
     bool operator==(const tag_t &other) const;
 
+    /* validate_and_insert()
+     * insert new tag and mark as valid.
+     */
     void validate_and_insert(const tag_t &other);
 
-    /* get_data(), is_valid and is_dirty:
+    /* get_data(), is_valid, get_full_address and is_dirty:
      * Getters for the data, valid and dirty fields.
      */
     uint32_t get_data() const;
@@ -79,14 +82,27 @@ class way {
      */
     void insert_tag(tag_t tag, set_t set);
 
+    /* check_set_valid:
+     * check if the tag in the set is valid.
+     */
     bool check_set_valid(set_t set) const;
 
+    /* is_set_dirty:
+     * check if the tag in the set is dirty.
+     */
     bool is_set_dirty(set_t set) const;
 
+    /* set_dirt_status:
+     * setter for the dirt status.
+     */
     void set_dirt_status(set_t set, bool status);
 
+    /* set_valid_status:
+     * setter for the vaild status.
+     */
     void set_valid_status(set_t set, bool status);
 
+    /* getter for the address */
     addr_t get_full_address(set_t set) const;
 };
 
@@ -123,8 +139,10 @@ class cache {
      */
     tag_t create_tag(addr_t address) const;
     set_t create_set(addr_t address) const;
-    int find_empty_space(set_t set) const; // TODO
-    int get_lru_way(set_t set) const;      // TODO
+    /* find empty space to insert into */
+    int find_empty_space(set_t set) const;
+    /* find the lru way with the queue */
+    int get_lru_way(set_t set) const;
 
   public:
     cache(int _size, int _block_size, int _cycles, int _assoc,
@@ -142,6 +160,9 @@ class cache {
      */
     addr_t find_victim(addr_t address);
 
+    /* is_victim_dirty:
+     * Check if the tag there is dirty
+     */
     outcome is_victim_dirty(addr_t victim_address);
 
     /* invalidate_victim:
@@ -149,6 +170,9 @@ class cache {
      */
     void invalidate_victim(addr_t victim_address);
 
+    /* dirtify_victim:
+     * Just dirty the victim.
+     */
     void dirtify_victim(addr_t victim_address);
 
     /* insert_new_data:
@@ -156,21 +180,23 @@ class cache {
      */
     void insert_new_data(addr_t address);
 
+    /* insert_dirty_new_data:
+     * Insert new data that was missing before that is dirty
+     */
     void insert_dirty_new_data(addr_t address);
 
-    /* write_back:
-     * Straight up insert at the address provided
+    /* find_and_write_data:
+     * find and write the data
      */
     outcome find_and_write_data(addr_t address);
 
-    /* mark_dirty:
-     * This is for a write operation. To write after a snoop or a write
-     * operation
+    /* set_dirt_status:
+     * set the dirty status to what you want
      */
     void set_dirt_status(addr_t address, bool status);
 
-    /* invalidate:
-     * Mark invalid after a write to a lower level
+    /* set_validity_status:
+     * set the valid status to what you want
      */
     void set_validity_status(addr_t address, bool status);
 
