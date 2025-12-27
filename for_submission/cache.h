@@ -186,7 +186,7 @@ class cache {
     void insert_dirty_new_data(addr_t address);
 
     /* find_and_write_data:
-     * find and write the data
+     * find and write the data, writing just means mark dirty, and return if it succeeded or not
      */
     outcome find_and_write_data(addr_t address);
 
